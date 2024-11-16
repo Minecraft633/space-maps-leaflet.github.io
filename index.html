@@ -117,6 +117,8 @@ map.once('popupclose', function(e){
   if (map.tap) map.tap.enable();
 });
 
+    L.control.layers(baseMaps).addTo(map);
+	
 var searchControl = new L.esri.Controls.Geosearch().addTo(map);
 
             var results = new L.LayerGroup().addTo(map);
@@ -128,7 +130,6 @@ var searchControl = new L.esri.Controls.Geosearch().addTo(map);
                 }
               });
 	
-    L.control.layers(baseMaps).addTo(map);
 </script>
 
 </body>
