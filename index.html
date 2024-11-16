@@ -41,10 +41,16 @@
         attribution: '© OpenStreetMap contributors'
     });
 
+    var moonLayer = new L.tileLayer('https://cartocdn-gusc.global.ssl.fastly.net/opmbuilder/api/v1/map/named/opm-moon-basemap-v0-1/all/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        tms: false
+    });
+
     // Layer control
     var baseMaps = {
         "Mars": marsLayer,
-        "Earth": streetLayer
+        "Earth": streetLayer,
+	"Moon": moonLayer
     };
 
     L.control.layers(baseMaps).addTo(map);
