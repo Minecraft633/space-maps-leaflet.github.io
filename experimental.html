@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>EXPERIMENTAL VERSION</title>
+    <title>Leaflet Celestial Bodies Selector</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
@@ -11,92 +11,120 @@
             height: 100%;
             margin: 0;
         }
-        .custom-control {
-            background: white;
+        .top-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #fff;
+            z-index: 1000;
             padding: 10px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
-        }
-        .celestial-icon {
-            width: 20px;
-            height: 20px;
-            margin-right: 5px;
-        }
-        .celestial-item {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            margin-bottom: 5px;
-            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .top-bar select, .top-bar button {
+            padding: 5px 10px;
+            margin: 0 5px;
+            font-size: 16px;
         }
     </style>
 </head>
 <body>
+<div class="top-bar">
+    <div>
+        <label for="celestial-select">Select Celestial Body:</label>
+        <select id="celestial-select">
+            <option value="Earth">Earth</option>
+            <option value="Mars">Mars</option>
+            <option value="Moon">Moon</option>
+        </select>
+    </div>
+    <div>
+        <button id="toggle-view">Toggle Satellite</button>
+    </div>
+</div>
 <div id="map"></div>
 
 <script>
     // Initialize map
     var map = L.map('map').setView([0, 0], 3);
 
-    // Define layers for different celestial bodies
-    var marsLayer = L.tileLayer('https://cartocdn-gusc.global.ssl.fastly.net/opmbuilder/api/v1/map/named/opm-mars-basemap-v0-2/all/{z}/{x}/{y}.png', {
-        tms: false,
-        maxZoom: 18,
-        attribution: 'Mars Basemap'
-    });
-
-    var moonLayer = L.tileLayer('https://{s}.tile.openseamap.org/tiles/moon/{z}/{x}/{y}.png', {
-        maxZoom: 18,
-        attribution: 'Moon Basemap'
-    });
-
-    var earthLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '© OpenStreetMap contributors'
-    }).addTo(map); // Default layer
-
-    // Function to switch layers
-    function switchToLayer(layer, center, zoom) {
-        map.eachLayer(function(existingLayer) {
-            map.removeLayer(existingLayer);
-        });
-        layer.addTo(map);
-        map.setView(center, zoom);
-    }
-
-    // Custom control for celestial body selection
-    var celestialControl = L.control({position: 'topright'});
-
-    celestialControl.onAdd = function(map) {
-        var div = L.DomUtil.create('div', 'custom-control');
-        div.innerHTML = `
-            <div class="celestial-item" onclick="selectBody('Earth')">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Earth-globe.png" class="celestial-icon" alt="Earth">
-                Earth
-            </div>
-            <div class="celestial-item" onclick="selectBody('Mars')">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/Mars.png" class="celestial-icon" alt="Mars">
-                Mars
-            </div>
-            <div class="celestial-item" onclick="selectBody('Moon')">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.png" class="celestial-icon" alt="Moon">
-                Moon
-            </div>
-        `;
-        return div;
-    };
-
-    celestialControl.addTo(map);
-
-    // Selection logic
-    window.selectBody = function(body) {
-        if (body === 'Earth') {
-            switchToLayer(earthLayer, [0, 0], 3);
-        } else if (body === 'Mars') {
-            switchToLayer(marsLayer, [0, 0], 3);
-        } else if (body === 'Moon') {
-            switchToLayer(moonLayer, [0, 0], 3);
+    // Define layers for celestial bodies
+    var layers = {
+        Earth: {
+            standard: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '© OpenStreetMap contributors'
+            }),
+            satellite: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '© OpenTopoMap contributors'
+            })
+        },
+        Mars: {
+            standard: L.tileLayer('https://cartocdn-gusc.global.ssl.fastly.net/opmbuilder/api/v1/map/named/opm-mars-basemap-v0-2/all/{z}/{x}/{y}.png', {
+                tms: false,
+                maxZoom: 18,
+                attribution: 'Mars Basemap'
+            }),
+            satellite: L.tileLayer('https://s3-eu-west-1.amazonaws.com/whereonmars.cartodb.net/celestia_mars-shaded-16k_global/{z}/{x}/{y}.png', {
+                tms: true,
+                maxZoom: 18,
+                attribution: 'Mars Satellite'
+            })
+        },
+        Moon: {
+            standard: L.tileLayer('https://{s}.tile.openseamap.org/tiles/moon/{z}/{x}/{y}.png', {
+                maxZoom: 18,
+                attribution: 'Moon Basemap'
+            }),
+            satellite: L.tileLayer('https://{s}.tile.nasa.gov/tiles/lunar/{z}/{x}/{y}.png', {
+                maxZoom: 18,
+                attribution: 'NASA Lunar Satellite'
+            })
         }
     };
+
+    // Initial layer setup
+    var currentBody = 'Earth';
+    var currentView = 'standard';
+    layers[currentBody][currentView].addTo(map);
+
+    // Update map layers when celestial body changes
+    document.getElementById('celestial-select').addEventListener('change', function (e) {
+        var selectedBody = e.target.value;
+        switchLayer(selectedBody, currentView);
+    });
+
+    // Toggle between standard and satellite view
+    document.getElementById('toggle-view').addEventListener('click', function () {
+        currentView = (currentView === 'standard') ? 'satellite' : 'standard';
+        switchLayer(currentBody, currentView);
+    });
+
+    // Function to switch layers
+    function switchLayer(body, view) {
+        // Remove existing layers
+        map.eachLayer(function (layer) {
+            map.removeLayer(layer);
+        });
+
+        // Add the new layer and update map view
+        layers[body][view].addTo(map);
+
+        // Adjust map view based on celestial body
+        if (body === 'Earth') {
+            map.setView([0, 0], 3);
+        } else if (body === 'Mars') {
+            map.setView([0, 0], 3);
+        } else if (body === 'Moon') {
+            map.setView([0, 0], 3);
+        }
+
+        currentBody = body; // Update current body
+    }
 </script>
 </body>
 </html>
