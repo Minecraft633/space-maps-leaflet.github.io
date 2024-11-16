@@ -4,11 +4,11 @@
 	<base target="_top">
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	
 	<title>OpenSpaceMap</title>
-	
 	<link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
-
+    <meta content="OpenSpaceMap" property="og:title" />
+    <meta content="OpenSpaceMap is a version of OpenStreetMap that uses Leaflet." property="og:description" />
+    <meta content="https://minecraft633.github.io/space-maps-leaflet.github.io/" property="og:url" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
@@ -45,17 +45,20 @@
     // Mars baselayer
     var marsLayer = new L.tileLayer('https://cartocdn-gusc.global.ssl.fastly.net/opmbuilder/api/v1/map/named/opm-mars-basemap-v0-2/all/{z}/{x}/{y}.png', {
         tms: false,
-        maxZoom: 18
+        maxZoom: 18,
+	attribution: '© OpenPlanetaryMap contributors'
     });
 
     var marssatLayer = new L.tileLayer('http://s3-eu-west-1.amazonaws.com/whereonmars.cartodb.net/celestia_mars-shaded-16k_global/{z}/{x}/{y}.png', {
         tms: true,
-        maxZoom: 18
+        maxZoom: 18,
+	"attribution": "The Celestia Community"
     });
 	
     var marstopoLayer = new L.tileLayer('http://s3-eu-west-1.amazonaws.com/whereonmars.cartodb.net/mola-color/{z}/{x}/{y}.png', {
         tms: true,
-        maxZoom: 18
+        maxZoom: 18,
+	attribution: "Mars Global Surveyor, MOLA"
     });
 	
     // OpenStreetMap layer for comparison
@@ -75,7 +78,8 @@
 	
     var moonLayer = new L.tileLayer('https://cartocdn-gusc.global.ssl.fastly.net/opmbuilder/api/v1/map/named/opm-moon-basemap-v0-1/all/{z}/{x}/{y}.png', {
         maxZoom: 19,
-        tms: false
+        tms: false,
+	attribution: '© OpenPlanetaryMap contributors, NASA, Lunar Reconnaissance Orbiter, LOLA Hillshade and DAM Albedo'
     });
 
     // Layer control
