@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Leaflet Celestial Bodies Selector</title>
+    <title>Leaflet with Celestial Bodies</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
@@ -11,47 +11,27 @@
             height: 100%;
             margin: 0;
         }
-        .top-bar {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: #fff;
-            z-index: 1000;
-            padding: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        .leaflet-control-layers {
+            position: relative;
         }
-        .top-bar select, .top-bar button {
-            padding: 5px 10px;
-            margin: 0 5px;
-            font-size: 16px;
+        .celestial-select-container {
+            margin-top: 10px;
+        }
+        .celestial-select {
+            width: 100%;
+            padding: 5px;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
-<div class="top-bar">
-    <div>
-        <label for="celestial-select">Select Celestial Body:</label>
-        <select id="celestial-select">
-            <option value="Earth">Earth</option>
-            <option value="Mars">Mars</option>
-            <option value="Moon">Moon</option>
-        </select>
-    </div>
-    <div>
-        <button id="toggle-view">Toggle Satellite</button>
-    </div>
-</div>
 <div id="map"></div>
 
 <script>
-    // Initialize map
+    // Initialize the map
     var map = L.map('map').setView([0, 0], 3);
 
-    // Define layers for celestial bodies
+    // Define base layers for Earth, Mars, and Moon
     var layers = {
         Earth: {
             standard: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -87,44 +67,68 @@
         }
     };
 
-    // Initial layer setup
+    // Initialize Earth (default layer)
     var currentBody = 'Earth';
     var currentView = 'standard';
     layers[currentBody][currentView].addTo(map);
 
-    // Update map layers when celestial body changes
+    // Base map layers
+    var baseLayers = {
+        "Earth (Standard)": layers.Earth.standard,
+        "Earth (Satellite)": layers.Earth.satellite,
+        "Mars (Standard)": layers.Mars.standard,
+        "Mars (Satellite)": layers.Mars.satellite,
+        "Moon (Standard)": layers.Moon.standard,
+        "Moon (Satellite)": layers.Moon.satellite
+    };
+
+    // Overlays (if needed)
+    var overlays = {};
+
+    // Add layer control to the map
+    var layerControl = L.control.layers(baseLayers, overlays).addTo(map);
+
+    // Add a dropdown for celestial body selection
+    var celestialDropdown = L.DomUtil.create('div', 'celestial-select-container');
+    celestialDropdown.innerHTML = `
+        <select id="celestial-select" class="celestial-select">
+            <option value="Earth">Earth</option>
+            <option value="Mars">Mars</option>
+            <option value="Moon">Moon</option>
+        </select>
+    `;
+    layerControl.getContainer().appendChild(celestialDropdown);
+
+    // Prevent map interaction when interacting with the dropdown
+    L.DomEvent.disableClickPropagation(celestialDropdown);
+
+    // Handle celestial body selection
     document.getElementById('celestial-select').addEventListener('change', function (e) {
         var selectedBody = e.target.value;
-        switchLayer(selectedBody, currentView);
-    });
 
-    // Toggle between standard and satellite view
-    document.getElementById('toggle-view').addEventListener('click', function () {
-        currentView = (currentView === 'standard') ? 'satellite' : 'standard';
-        switchLayer(currentBody, currentView);
-    });
+        // Switch map layers and center based on celestial body
+        if (selectedBody !== currentBody) {
+            map.eachLayer(function (layer) {
+                map.removeLayer(layer);
+            });
 
-    // Function to switch layers
-    function switchLayer(body, view) {
-        // Remove existing layers
-        map.eachLayer(function (layer) {
-            map.removeLayer(layer);
-        });
+            // Add the default (standard) layer for the selected body
+            layers[selectedBody].standard.addTo(map);
 
-        // Add the new layer and update map view
-        layers[body][view].addTo(map);
+            // Adjust the map view for the selected celestial body
+            if (selectedBody === 'Earth') {
+                map.setView([0, 0], 3);
+            } else if (selectedBody === 'Mars') {
+                map.setView([0, 0], 3);
+            } else if (selectedBody === 'Moon') {
+                map.setView([0, 0], 3);
+            }
 
-        // Adjust map view based on celestial body
-        if (body === 'Earth') {
-            map.setView([0, 0], 3);
-        } else if (body === 'Mars') {
-            map.setView([0, 0], 3);
-        } else if (body === 'Moon') {
-            map.setView([0, 0], 3);
+            currentBody = selectedBody;
+            currentView = 'standard'; // Reset view to standard on change
         }
+    });
 
-        currentBody = body; // Update current body
-    }
 </script>
 </body>
 </html>
