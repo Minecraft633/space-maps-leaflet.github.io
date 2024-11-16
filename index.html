@@ -116,8 +116,8 @@ map.once('popupclose', function(e){
   map.keyboard.enable();
   if (map.tap) map.tap.enable();
 });
-
 	
+L.control.scale().addTo(map);
     L.control.layers(baseMaps).addTo(map);
 </script>
 
