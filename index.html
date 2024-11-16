@@ -27,7 +27,20 @@
 
 <div id="map" style="width: 100%; height: 100%;"></div>
 <script>
-    var map = L.map('map').setView([0, 0], 3); // Initialize map
+    var map = L.map('map', {
+  center: [54, 0],
+  zoom: 6,
+  // don't add the zoom control
+  zoomControl: false,
+  // disable drag and zoom handlers
+  dragging: false,
+  touchZoom: false,
+  doubleClickZoom: false,
+  scrollWheelZoom: false,
+  boxZoom: false,
+  keyboard: false,
+  tap: false
+	}).setView([0, 0], 3); // Initialize map
 
     // Mars baselayer
     var marsLayer = new L.tileLayer('https://cartocdn-gusc.global.ssl.fastly.net/opmbuilder/api/v1/map/named/opm-mars-basemap-v0-2/all/{z}/{x}/{y}.png', {
@@ -81,7 +94,7 @@ var popup = L.popup({
   autoClose: true
 })
 .setLatLng(map.getBounds().getCenter())
-.setContent('<p>Welcome to OpenSpaceMap!.</p>')
+.setContent("<p>Welcome to OpenSpaceMap!</p> <p>On the top right, you can change the Celestial body, just hover over (or on mobile, tap) the Layers icon and you're done!.</p>")
 .openOn(map);
 
 map.once('popupclose', function(e){
