@@ -118,7 +118,24 @@ map.once('popupclose', function(e){
 });
 
     L.control.layers(baseMaps).addTo(map);
+
 	
+var geocoder = L.Control.Geocoder.nominatim();
+        var searchControl = L.Control.geocoder({
+            query: "",
+            placeholder: "Search...",
+            geocoder: geocoder,
+            defaultMarkGeocode: false
+        }).on('markgeocode', function (e) {
+            var bbox = e.geocode.bbox;
+            var poly = L.polygon([
+                [bbox.getSouthEast().lat, bbox.getSouthEast().lng],
+                [bbox.getNorthEast().lat, bbox.getNorthEast().lng],
+                [bbox.getNorthWest().lat, bbox.getNorthWest().lng],
+                [bbox.getSouthWest().lat, bbox.getSouthWest().lng]
+            ]).addTo(map);
+            map.fitBounds(poly.getBounds());
+        }).addTo(map);
 </script>
 
 </body>
