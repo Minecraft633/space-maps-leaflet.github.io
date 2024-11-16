@@ -44,7 +44,10 @@
   keyboard: false,
   tap: false
 	}).setView([0, 0], 3); // Initialize map
-
+	
+L.CRS.MoonSphericalMercator = L.extend({}, L.CRS.EPSG3857, {R: 1737000});
+L.CRS.MarsSphericalMercator = L.extend({}, L.CRS.EPSG3857, {R: 3389500});
+	
     // Mars baselayer
     var marsLayer = new L.tileLayer('https://cartocdn-gusc.global.ssl.fastly.net/opmbuilder/api/v1/map/named/opm-mars-basemap-v0-2/all/{z}/{x}/{y}.png', {
         tms: false,
