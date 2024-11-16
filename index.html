@@ -101,7 +101,7 @@ var popup = L.popup({
   autoClose: true
 })
 .setLatLng(map.getBounds().getCenter())
-.setContent("<p>Welcome to OpenSpaceMap 1.0!</p> <p>On the top right, you can change the Celestial body, just hover over (or on mobile, tap) the Layers icon and you're done!.</p> <p>No scale bar because it's hard changing the CRS between layers.</p>")
+.setContent("<p>Welcome to OpenSpaceMap 1.0.1!</p> <p>On the top right, you can change the Celestial body, just hover over (or on mobile, tap) the Layers icon and you're done!.</p> <p>No scale bar because it's hard changing the CRS between layers.</p>")
 .openOn(map);
 
 map.once('popupclose', function(e){
@@ -116,6 +116,17 @@ map.once('popupclose', function(e){
   map.keyboard.enable();
   if (map.tap) map.tap.enable();
 });
+
+var searchControl = new L.esri.Controls.Geosearch().addTo(map);
+
+            var results = new L.LayerGroup().addTo(map);
+
+              searchControl.on('results', function(data){
+                results.clearLayers();
+                for (var i = data.results.length - 1; i >= 0; i--) {
+                  results.addLayer(L.marker(data.results[i].latlng));
+                }
+              });
 	
     L.control.layers(baseMaps).addTo(map);
 </script>
