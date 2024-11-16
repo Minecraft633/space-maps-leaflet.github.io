@@ -5,7 +5,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	
-	<title>Quick Start - Leaflet</title>
+	<title>OpenSpaceMap</title>
 	
 	<link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
 
@@ -77,6 +77,15 @@
     };
 
     L.control.layers(baseMaps).addTo(map);
+    L.control.scale().addTo(map);
+
+    // Add the distance measurement control
+    var measureControl = new L.Control.Measure({
+        primaryLengthUnit: 'meters',  // Can be 'meters', 'kilometers', 'miles', etc.
+        secondaryLengthUnit: 'kilometers', // Optional
+        activeColor: '#ABE67E',  // Active color of the line
+        completedColor: '#C8F7C5'  // Completed line color
+    }).addTo(map);
 </script>
 
 </body>
