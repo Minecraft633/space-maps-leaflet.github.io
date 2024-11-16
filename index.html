@@ -45,54 +45,44 @@
   tap: false
 	}).setView([0, 0], 3); // Initialize map
 	
-L.CRS.MoonSphericalMercator = L.extend({}, L.CRS.EPSG3857, {R: 1737000});
-L.CRS.MarsSphericalMercator = L.extend({}, L.CRS.EPSG3857, {R: 3389500});
-	
     // Mars baselayer
     var marsLayer = new L.tileLayer('https://cartocdn-gusc.global.ssl.fastly.net/opmbuilder/api/v1/map/named/opm-mars-basemap-v0-2/all/{z}/{x}/{y}.png', {
         tms: false,
         maxZoom: 18,
-	attribution: '© OpenPlanetaryMap contributors',
-	crs: L.CRS.MarsSphericalMercator
+	attribution: '© OpenPlanetaryMap contributors'
     });
 
     var marssatLayer = new L.tileLayer('http://s3-eu-west-1.amazonaws.com/whereonmars.cartodb.net/celestia_mars-shaded-16k_global/{z}/{x}/{y}.png', {
         tms: true,
         maxZoom: 18,
-	"attribution": "The Celestia Community",
-	crs: L.CRS.MarsSphericalMercator
+	"attribution": "The Celestia Community"
     });
 	
     var marstopoLayer = new L.tileLayer('http://s3-eu-west-1.amazonaws.com/whereonmars.cartodb.net/mola-color/{z}/{x}/{y}.png', {
         tms: true,
         maxZoom: 18,
-	attribution: "Mars Global Surveyor, MOLA",
-	crs: L.CRS.MarsSphericalMercator
+	attribution: "Mars Global Surveyor, MOLA"
     });
 	
     // OpenStreetMap layer for comparison
     var streetLayer = new L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
-        attribution: '© OpenStreetMap contributors',
-	crs: L.CRS.EPSG3857
+        attribution: '© OpenStreetMap contributors'
     }).addTo(map);
 
     var topoLayer = new L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
         maxZoom: 17,
-        attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
-	crs: L.CRS.EPSG3857
+        attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
     });
 	
     var earthSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-	attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
-	crs: L.CRS.EPSG3857
+	attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
     });
 	
     var moonLayer = new L.tileLayer('https://cartocdn-gusc.global.ssl.fastly.net/opmbuilder/api/v1/map/named/opm-moon-basemap-v0-1/all/{z}/{x}/{y}.png', {
         maxZoom: 19,
         tms: false,
-	attribution: '© OpenPlanetaryMap contributors, NASA, Lunar Reconnaissance Orbiter, LOLA Hillshade and DAM Albedo',
-	crs: L.CRS.MoonSphericalMercator
+	attribution: '© OpenPlanetaryMap contributors, NASA, Lunar Reconnaissance Orbiter, LOLA Hillshade and DAM Albedo'
     });
 
     // Layer control
@@ -111,7 +101,7 @@ var popup = L.popup({
   autoClose: true
 })
 .setLatLng(map.getBounds().getCenter())
-.setContent("<p>Welcome to OpenSpaceMap 1.0!</p> <p>On the top right, you can change the Celestial body, just hover over (or on mobile, tap) the Layers icon and you're done!.</p>")
+.setContent("<p>Welcome to OpenSpaceMap 1.0!</p> <p>On the top right, you can change the Celestial body, just hover over (or on mobile, tap) the Layers icon and you're done!.</p> <p>No scale bar because it's hard changing the CRS between layers.</p>")
 .openOn(map);
 
 map.once('popupclose', function(e){
