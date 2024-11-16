@@ -27,27 +27,27 @@
 
 <div id="map" style="width: 100%; height: 100%;"></div>
 <script>
-var map = L.map('map').setView([0, 0], 3);
+    var map = L.map('map').setView([0, 0], 3); // Initialize map
 
-// Mars baselayer
-var marsLayer = new L.tileLayer('https://cartocdn-gusc.global.ssl.fastly.net/opmbuilder/api/v1/map/named/opm-mars-basemap-v0-2/all/{z}/{x}/{y}.png', {
-    tms: false,
-    zoom: 3
-}).addTo(map);
+    // Mars baselayer
+    var marsLayer = new L.tileLayer('https://cartocdn-gusc.global.ssl.fastly.net/opmbuilder/api/v1/map/named/opm-mars-basemap-v0-2/all/{z}/{x}/{y}.png', {
+        tms: false,
+        maxZoom: 18
+    }).addTo(map);
 
-// OpenStreetMap layer for comparison
-var streetLayer = new L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '© OpenStreetMap contributors'
-});
+    // OpenStreetMap layer for comparison
+    var streetLayer = new L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap contributors'
+    });
 
-// Layer control
-var baseMaps = {
-    "Mars: marsLayer,
-    "Earth": streetLayer
-};
+    // Layer control
+    var baseMaps = {
+        "Mars": marsLayer,
+        "Earth": streetLayer
+    };
 
-L.control.layers(baseMaps).addTo(map);
+    L.control.layers(baseMaps).addTo(map);
 </script>
 
 </body>
