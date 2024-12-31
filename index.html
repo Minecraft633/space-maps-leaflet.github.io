@@ -80,12 +80,22 @@
     var earthSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
 	attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
     });
+
+	
+    var nightLayer = new L.tileLayer('http://map1.vis.earthdata.nasa.gov/wmts-webmerc/VIIRS_CityLights_2016/default/{time}/{tilematrixset}{maxZoom}/{z}/{y}/{x}.{format}', {
+        maxZoom: 8,
+	format: 'jpg',
+	time: '',
+        tilematrixset: 'GoogleMapsCompatible_Level',
+    });
 	
     var moonLayer = new L.tileLayer('https://cartocdn-gusc.global.ssl.fastly.net/opmbuilder/api/v1/map/named/opm-moon-basemap-v0-1/all/{z}/{x}/{y}.png', {
         maxZoom: 19,
         tms: false,
 	attribution: '© OpenPlanetaryMap contributors, NASA, Lunar Reconnaissance Orbiter, LOLA Hillshade and DAM Albedo'
     });
+
+
 
     // Layer control
     var baseMaps = {
@@ -95,6 +105,7 @@
         "Earth": streetLayer,
 	"Earth Topography": topoLayer,
 	"Earth Satellite": earthSat,
+	"City Lights": nightLayer,
 	"Moon": moonLayer
     };
 
